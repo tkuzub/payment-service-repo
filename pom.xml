@@ -4,14 +4,32 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.tkuzub</groupId>
+    <groupId>com.iprody</groupId>
     <artifactId>payment-service-repo</artifactId>
     <version>1.0-SNAPSHOT</version>
+    <name>Payment Service</name>
+    <description>Parent project for Payment Service</description>
+    <packaging>pom</packaging>
 
     <properties>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven-compiler-plugin.version>3.14.1</maven-compiler-plugin.version>
     </properties>
+
+    <modules>
+        <module>payment-service-app</module>
+    </modules>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven-compiler-plugin.version}</version>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
