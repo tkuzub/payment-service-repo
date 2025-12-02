@@ -23,7 +23,7 @@ public class InMemoryPaymentDao implements PaymentDao {
 
     @Override
     public Optional<Payment> getById(Long id) {
-        Payment payment = paymentDtoMap.get(id);
+        final var payment = paymentDtoMap.get(id);
         if (payment == null) {
             throw new EntityNotFoundException(String.format("can't find account with id = %d", id));
         }
@@ -31,9 +31,9 @@ public class InMemoryPaymentDao implements PaymentDao {
     }
 
     @Override
-    public Payment save(Payment payment) {
+    public Payment save(final Payment payment) {
         if (payment.getId() == null) {
-           payment.setId(isSequence++);
+            payment.setId(isSequence++);
         }
         paymentDtoMap.put(payment.getId(), payment);
         return payment;

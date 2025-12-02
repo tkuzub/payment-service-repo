@@ -1,4 +1,5 @@
 package com.iprody.payment.service.app.controller;
+
 import com.iprody.payment.service.app.dto.PaymentRequest;
 import com.iprody.payment.service.app.dto.PaymentResponse;
 import com.iprody.payment.service.app.model.PaymentStatus;
@@ -26,7 +27,7 @@ public class PaymentController {
 
     @GetMapping
     public List<PaymentResponse> getAll() {
-       return paymentService.getAllPayments();
+        return paymentService.getAllPayments();
     }
 
     @GetMapping("/{id}")
