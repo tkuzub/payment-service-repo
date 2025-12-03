@@ -1,10 +1,10 @@
 package com.iprody.payment.service.app.service.impl;
 
+import com.iprody.payment.service.app.exception.ServiceException;
 import com.iprody.payment.service.app.model.Payment;
 import com.iprody.payment.service.app.dto.PaymentRequest;
 import com.iprody.payment.service.app.dto.PaymentResponse;
 import com.iprody.payment.service.app.model.PaymentStatus;
-import com.iprody.payment.service.app.exception.PaymentNotFoundException;
 import com.iprody.payment.service.app.mapper.PaymentDtoMapper;
 import com.iprody.payment.service.app.service.PaymentService;
 import com.iprody.payment.service.app.repository.dao.PaymentDao;
@@ -13,6 +13,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Objects;
+
+import static com.iprody.payment.service.app.exception.ErrorMessage.PAYMENT_NOT_EXIST;
 
 @Service
 @AllArgsConstructor
@@ -24,7 +26,7 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     public PaymentResponse getPaymentById(Long id) {
         final var payment = paymentDao.getById(id)
-            .orElseThrow(() -> new PaymentNotFoundException(String.format("Payment with id = %d does not exists", id)));
+            .orElseThrow(() -> new ServiceException(PAYMENT_NOT_EXIST, id));
         return paymentDtoMapper.toPaymentResponse(payment);
     }
 
@@ -46,7 +48,7 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     public PaymentResponse updateStatus(Long id, PaymentStatus status) {
         final var payment = paymentDao.getById(id)
-            .orElseThrow(() -> new PaymentNotFoundException(String.format("Payment with id = %d does not exists", id)));
+            .orElseThrow(() -> new ServiceException(PAYMENT_NOT_EXIST, id));
         payment.setStatus(status);
         paymentDao.save(payment);
         return paymentDtoMapper.toPaymentResponse(payment);
