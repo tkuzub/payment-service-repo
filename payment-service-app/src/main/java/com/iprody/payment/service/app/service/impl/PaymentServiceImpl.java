@@ -23,30 +23,30 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public PaymentResponse getPaymentById(Long id) {
-        var payment = paymentDao.getById(id)
-                .orElseThrow(() -> new PaymentNotFoundException(String.format("Payment with id = %d does not exists", id)));
+        final var payment = paymentDao.getById(id)
+            .orElseThrow(() -> new PaymentNotFoundException(String.format("Payment with id = %d does not exists", id)));
         return paymentDtoMapper.toPaymentResponse(payment);
     }
 
     @Override
     public List<PaymentResponse> getAllPayments() {
-        List<Payment> payments = paymentDao.getAll();
+        final List<Payment> payments = paymentDao.getAll();
         return payments.stream()
-                .filter(Objects::nonNull)
-                .map(paymentDtoMapper::toPaymentResponse)
-                .toList();
+            .filter(Objects::nonNull)
+            .map(paymentDtoMapper::toPaymentResponse)
+            .toList();
     }
 
     @Override
     public PaymentResponse addPayment(PaymentRequest paymentRequest) {
-        var payment = paymentDtoMapper.toPayment(paymentRequest);
+        final var payment = paymentDtoMapper.toPayment(paymentRequest);
         return paymentDtoMapper.toPaymentResponse(paymentDao.save(payment));
     }
 
     @Override
     public PaymentResponse updateStatus(Long id, PaymentStatus status) {
-        var payment = paymentDao.getById(id)
-                .orElseThrow(() -> new PaymentNotFoundException(String.format("Payment with id = %d does not exists", id)));
+        final var payment = paymentDao.getById(id)
+            .orElseThrow(() -> new PaymentNotFoundException(String.format("Payment with id = %d does not exists", id)));
         payment.setStatus(status);
         paymentDao.save(payment);
         return paymentDtoMapper.toPaymentResponse(payment);

@@ -31,7 +31,6 @@ public class InMemoryPaymentDao implements PaymentDao {
     }
 
     @Override
-    public Payment save(Payment payment) {
         if (payment.getId() == null) {
            payment.setId(isSequence++);
         }
