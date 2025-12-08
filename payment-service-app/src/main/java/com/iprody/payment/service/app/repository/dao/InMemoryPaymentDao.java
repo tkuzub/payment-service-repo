@@ -1,6 +1,7 @@
 package com.iprody.payment.service.app.repository.dao;
 
-import com.iprody.payment.service.app.exception.PaymentNotFoundException;
+import com.iprody.payment.service.app.exception.ErrorMessage;
+import com.iprody.payment.service.app.exception.ServiceException;
 import com.iprody.payment.service.app.model.Payment;
 import org.springframework.stereotype.Component;
 
@@ -25,7 +26,7 @@ public class InMemoryPaymentDao implements PaymentDao {
     public Optional<Payment> getById(Long id) {
         final Payment payment = paymentDtoMap.get(id);
         if (payment == null) {
-            throw new PaymentNotFoundException(String.format("can't find account with id = %d", id));
+            throw new ServiceException(ErrorMessage.PAYMENT_NOT_EXIST, id);
         }
         return Optional.of(payment);
     }
@@ -37,10 +38,5 @@ public class InMemoryPaymentDao implements PaymentDao {
         }
         paymentDtoMap.put(payment.getId(), payment);
         return payment;
-    }
-
-    public void clear() {
-        paymentDtoMap.clear();
-        isSequence = 1L;
     }
 }

@@ -1,8 +1,8 @@
 package com.iprody.payment.service.app.service.impl;
 
 import com.iprody.payment.service.app.dto.PaymentResponse;
+import com.iprody.payment.service.app.exception.ServiceException;
 import com.iprody.payment.service.app.model.PaymentStatus;
-import com.iprody.payment.service.app.exception.PaymentNotFoundException;
 import com.iprody.payment.service.app.mapper.PaymentDtoMapper;
 import com.iprody.payment.service.app.repository.dao.PaymentDao;
 import com.iprody.payment.service.app.utils.TestUtils;
@@ -61,8 +61,8 @@ class PaymentServiceImplTest {
         doReturn(Optional.empty()).when(paymentDao).getById(payment.getId());
         // then
         assertThatThrownBy(() -> paymentService.getPaymentById(payment.getId()))
-                .isInstanceOf(PaymentNotFoundException.class)
-                .hasMessageContaining("Payment with id = 2 does not exists");
+                .isInstanceOf(ServiceException.class)
+                .hasMessageContaining(String.format("Payment id=%s does not exist", payment.getId()));
         verify(paymentDao).getById(payment.getId());
         verifyNoInteractions(paymentDtoMapper);
     }
@@ -110,8 +110,8 @@ class PaymentServiceImplTest {
         doReturn(Optional.empty()).when(paymentDao).getById(payment.getId());
         // then
         assertThatThrownBy(() -> paymentService.getPaymentById(payment.getId()))
-                .isInstanceOf(PaymentNotFoundException.class)
-                .hasMessageContaining("Payment with id = 2 does not exists");
+                .isInstanceOf(ServiceException.class)
+                .hasMessageContaining(String.format("Payment id=%s does not exist", payment.getId()));
         verify(paymentDao).getById(payment.getId());
         verify(paymentDtoMapper, never()).toPaymentResponse(payment);
         verify(paymentDao, never()).save(payment);
