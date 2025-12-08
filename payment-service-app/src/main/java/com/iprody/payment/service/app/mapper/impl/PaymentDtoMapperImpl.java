@@ -12,10 +12,8 @@ public class PaymentDtoMapperImpl implements PaymentDtoMapper {
     @Override
     public PaymentResponse toPaymentResponse(Payment payment) {
         return PaymentResponse.builder()
-                .id(payment.getId())
+                .id(payment.getGuid())
                 .amount(payment.getAmount())
-                .email(payment.getEmail())
-                .method(payment.getMethod())
                 .status(payment.getStatus())
                 .build();
     }
@@ -23,9 +21,7 @@ public class PaymentDtoMapperImpl implements PaymentDtoMapper {
     @Override
     public Payment toPayment(PaymentRequest paymentRequest) {
         return Payment.builder()
-                .email(paymentRequest.getEmail())
                 .amount(paymentRequest.getAmount())
-                .method(paymentRequest.getMethod())
                 .status(paymentRequest.getStatus())
                 .build();
     }

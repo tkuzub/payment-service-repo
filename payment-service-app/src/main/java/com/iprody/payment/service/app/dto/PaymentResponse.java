@@ -1,7 +1,7 @@
 package com.iprody.payment.service.app.dto;
 
-import com.iprody.payment.service.app.model.PaymentMethod;
 import com.iprody.payment.service.app.model.PaymentStatus;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 @Builder
 @Setter
@@ -18,10 +19,7 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @EqualsAndHashCode
 public class PaymentResponse {
-
-    private Long id;
-    private String email;
+    private UUID id;
     private BigDecimal amount;
     private PaymentStatus status;
-    private PaymentMethod method;
 }

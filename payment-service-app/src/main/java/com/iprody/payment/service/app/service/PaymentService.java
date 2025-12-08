@@ -1,18 +1,13 @@
 package com.iprody.payment.service.app.service;
 
-import com.iprody.payment.service.app.dto.PaymentRequest;
 import com.iprody.payment.service.app.dto.PaymentResponse;
-import com.iprody.payment.service.app.model.PaymentStatus;
 
 import java.util.List;
+import java.util.UUID;
 
 public interface PaymentService {
 
-    PaymentResponse getPaymentById(Long id);
+    PaymentResponse getPaymentById(UUID uuid);
 
     List<PaymentResponse> getAllPayments();
-
-    PaymentResponse addPayment(PaymentRequest payment);
-
-    PaymentResponse updateStatus(Long id, PaymentStatus status);
 }

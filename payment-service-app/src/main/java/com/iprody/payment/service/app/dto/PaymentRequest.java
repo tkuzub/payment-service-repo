@@ -1,6 +1,5 @@
 package com.iprody.payment.service.app.dto;
 
-import com.iprody.payment.service.app.model.PaymentMethod;
 import com.iprody.payment.service.app.model.PaymentStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,9 +17,6 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @EqualsAndHashCode
 public class PaymentRequest {
-
-    private  String email;
     private  BigDecimal amount;
     private  PaymentStatus status;
-    private  PaymentMethod method;
 }

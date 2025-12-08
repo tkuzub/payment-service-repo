@@ -2,32 +2,34 @@ package com.iprody.payment.service.app.service.impl;
 
 import com.iprody.payment.service.app.dto.PaymentResponse;
 import com.iprody.payment.service.app.exception.ServiceException;
-import com.iprody.payment.service.app.model.PaymentStatus;
 import com.iprody.payment.service.app.mapper.PaymentDtoMapper;
-import com.iprody.payment.service.app.repository.dao.PaymentDao;
+import com.iprody.payment.service.app.repository.PaymentRepository;
 import com.iprody.payment.service.app.utils.TestUtils;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.UUID;
+
+import static java.util.Collections.EMPTY_LIST;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
-
-import java.util.Objects;
-import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
 class PaymentServiceImplTest {
 
     @Mock
-    private PaymentDao paymentDao;
+    private PaymentRepository paymentRepository;
     @Mock
     private PaymentDtoMapper paymentDtoMapper;
 
@@ -39,17 +41,18 @@ class PaymentServiceImplTest {
         // given
         var payment = TestUtils.generatePayment();
         var paymentResponse = TestUtils.generatePaymentResponse();
-        doReturn(Optional.ofNullable(payment)).when(paymentDao)
-                .getById(Objects.requireNonNull(payment).getId());
+        paymentResponse.setId(payment.getGuid());
+        doReturn(Optional.of(payment)).when(paymentRepository)
+                .findById(Objects.requireNonNull(payment).getGuid());
         doReturn(paymentResponse).when(paymentDtoMapper).toPaymentResponse(payment);
         // when
-        PaymentResponse response = paymentService.getPaymentById(payment.getId());
+        PaymentResponse response = paymentService.getPaymentById(payment.getGuid());
         // then
         assertAll(
                 () -> assertThat(response).isNotNull(),
                 () -> assertThat(response).isEqualTo(paymentResponse)
         );
-        verify(paymentDao).getById(payment.getId());
+        verify(paymentRepository).findById(payment.getGuid());
         verify(paymentDtoMapper).toPaymentResponse(payment);
     }
 
@@ -57,63 +60,34 @@ class PaymentServiceImplTest {
     void shouldThrowsExceptionIfPaymentDoesNotExists() {
         // given
         var payment = TestUtils.generatePayment();
-        payment.setId(2L);
-        doReturn(Optional.empty()).when(paymentDao).getById(payment.getId());
+        payment.setGuid(UUID.randomUUID());
+        doReturn(Optional.empty()).when(paymentRepository).findById(payment.getGuid());
         // then
-        assertThatThrownBy(() -> paymentService.getPaymentById(payment.getId()))
+        assertThatThrownBy(() -> paymentService.getPaymentById(payment.getGuid()))
                 .isInstanceOf(ServiceException.class)
-                .hasMessageContaining(String.format("Payment id=%s does not exist", payment.getId()));
-        verify(paymentDao).getById(payment.getId());
+                .hasMessageContaining(String.format("Payment with id = %s does not exist", payment.getGuid()));
+        verify(paymentRepository).findById(payment.getGuid());
         verifyNoInteractions(paymentDtoMapper);
     }
 
     @Test
-    void addPayment() {
+    void shouldReturnAllPaymentsMappedToPaymentsResponse() {
         // given
-        var paymentResponse = TestUtils.generatePaymentResponse();
-        var paymentRequest = TestUtils.generatePaymentRequest();
         var payment = TestUtils.generatePayment();
-        doReturn(payment).when(paymentDtoMapper).toPayment(paymentRequest);
-        doReturn(payment).when(paymentDao).save(payment);
-        doReturn(paymentResponse).when(paymentDtoMapper).toPaymentResponse(payment);
+        doReturn(List.of(payment)).when(paymentRepository).findAll();
         // when
-        var actualPaymentResponse = paymentService.addPayment(paymentRequest);
+        List<PaymentResponse> allPayments = paymentService.getAllPayments();
         // then
-        assertThat(actualPaymentResponse).isNotNull().isEqualTo(paymentResponse);
-        verify(paymentDtoMapper).toPayment(paymentRequest);
-        verify(paymentDao).save(payment);
+        assertThat(allPayments).hasSize(1);
         verify(paymentDtoMapper).toPaymentResponse(payment);
     }
 
     @Test
-    void shouldUpdateAndReturnPaymentResponse() {
-        // given
-        var payment = TestUtils.generatePayment();
-        var paymentResponse = TestUtils.generatePaymentResponse();
-        doReturn(Optional.ofNullable(payment)).when(paymentDao).getById(Objects.requireNonNull(payment).getId());
-        payment.setStatus(PaymentStatus.CREATED);
-
-        paymentResponse.setStatus(PaymentStatus.CREATED);
-        doReturn(paymentResponse).when(paymentDtoMapper).toPaymentResponse(payment);
+    void shouldReturnEmptyListWhenNoPaymentExist() {
+        doReturn(EMPTY_LIST).when(paymentRepository).findAll();
         // when
-        var actualResponse = paymentService.updateStatus(1L, PaymentStatus.CREATED);
+        List<PaymentResponse> allPayments = paymentService.getAllPayments();
         // then
-        assertThat(actualResponse.getStatus()).isEqualTo(PaymentStatus.CREATED);
-        verify(paymentDao).save(payment);
-    }
-
-    @Test
-    void shouldThrowExceptionIfPaymentDoesNotExist() {
-        // given
-        var payment = TestUtils.generatePayment();
-        payment.setId(2L);
-        doReturn(Optional.empty()).when(paymentDao).getById(payment.getId());
-        // then
-        assertThatThrownBy(() -> paymentService.getPaymentById(payment.getId()))
-                .isInstanceOf(ServiceException.class)
-                .hasMessageContaining(String.format("Payment id=%s does not exist", payment.getId()));
-        verify(paymentDao).getById(payment.getId());
-        verify(paymentDtoMapper, never()).toPaymentResponse(payment);
-        verify(paymentDao, never()).save(payment);
+        assertThat(allPayments).hasSize(0);
     }
 }

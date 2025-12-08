@@ -1,7 +1,16 @@
+server:
+  port: 8080
 spring:
   application:
     name: payment-service-app
-server:
-  port: 8080
-
-
+  datasource:
+    url: jdbc:postgresql://localhost:5432/payment-db
+    username: admin
+    password: secret
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
