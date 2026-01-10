@@ -1,8 +1,9 @@
 package com.iprody.payment.service.app.model;
 
 public enum PaymentStatus {
-    CREATED,
+    RECEIVED,
     PENDING,
-    FAILED,
-    CANCELLED,
+    DECLINED,
+    APPROVED,
+    NOT_SENT
 }

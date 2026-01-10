@@ -4,3 +4,30 @@ services:
     image: payment-service-app
     ports:
       - "8080:8080"
+  postgres:
+    image: postgres:16
+    container_name: postgres-db
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: payment-db
+      LC_MESSAGES: en_US.UTF-8
+    ports:
+    - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    restart: unless-stopped
+  cloudbeaver:
+    image: dbeaver/cloudbeaver:latest
+    container_name: cloudbeaver
+    depends_on:
+      - postgres
+    ports:
+      - "8081:8978"
+    volumes:
+      - cloudbeaver-data:/var/lib/cloudbeaver/workspace
+    restart: unless-stopped
+
+volumes:
+  postgres-data:
+  cloudbeaver-data:
